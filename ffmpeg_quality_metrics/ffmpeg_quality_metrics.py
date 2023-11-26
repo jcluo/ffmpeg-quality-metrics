@@ -139,6 +139,8 @@ class FfmpegQualityMetrics:
         progress: Union[bool, None] = False,
         keep_tmp_files: Union[bool, None] = False,
         tmp_dir: Union[str, None] = None,
+        vsize: Union[str, None] = None,
+        pixfmt: Union[str, None] = None
     ):
         """Instantiate a new FfmpegQualityMetrics
 
@@ -169,6 +171,8 @@ class FfmpegQualityMetrics:
         self.progress = bool(progress)
         self.keep_tmp_files = bool(keep_tmp_files)
         self.tmp_dir = str(tmp_dir) if tmp_dir is not None else tempfile.gettempdir()
+        self.vsize = str(vsize)
+        self.pixfmt = str(pixfmt)
 
         if not os.path.isfile(self.ref):
             raise FfmpegQualityMetricsError(f"Reference file not found: {self.ref}")
@@ -567,13 +571,23 @@ class FfmpegQualityMetrics:
             "-nostats",
             "-y",
             "-threads",
-            str(self.threads),
+            str(self.threads)]
+        
+        if self.ref.endswith('.yuv'):
+            cmd += ["-s", self.vsize, "-pix_fmt", self.pixfmt]
+        
+        cmd += [
             "-r",
             str(ref_framerate),
             "-i",
             self.ref,
             "-itsoffset",
-            str(self.dist_delay),
+            str(self.dist_delay)]
+        
+        if self.dist.endswith('.yuv'):
+            cmd += ["-s", self.vsize, "-pix_fmt", self.pixfmt]
+        
+        cmd += [
             "-r",
             str(dist_framerate),
             "-i",

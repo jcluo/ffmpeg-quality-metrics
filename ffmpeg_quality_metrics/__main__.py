@@ -111,6 +111,18 @@ def main() -> None:
         help="Number of threads to do the calculations",
     )
 
+    ffmpeg_opts.add_argument(
+        "--vsize",
+        type=str,
+        help="video size",
+    )
+
+    ffmpeg_opts.add_argument(
+        "--pix_fmt",
+        type=str,
+        help="pixel format",
+    )
+
     output_opts = parser.add_argument_group("Output options")
 
     output_opts.add_argument(
@@ -184,6 +196,8 @@ def main() -> None:
         progress=cli_args.progress,
         keep_tmp_files=cli_args.keep_tmp,
         tmp_dir=cli_args.tmp_dir,
+        vsize=cli_args.vsize,
+        pixfmt=cli_args.pix_fmt
     )
 
     metrics = cli_args.metrics
